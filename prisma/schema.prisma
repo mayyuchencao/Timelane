@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TimerStatus {
+  running
+  paused
+  completed
+}
+
+enum EntrySourceType {
+  timer
+  manual
+  edited
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  displayName   String?
+  timezone      String          @default("America/New_York")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  groups        CategoryGroup[]
+  activities    Activity[]
+  timerSessions TimerSession[]
+  timeEntries   TimeEntry[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model CategoryGroup {
+  id         String     @id @default(cuid())
+  userId     String
+  name       String
+  sortOrder  Int        @default(0)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities Activity[]
+
+  @@index([userId, sortOrder])
+}
+
+model Activity {
+  id          String         @id @default(cuid())
+  userId      String
+  groupId     String?
+  name        String
+  color       String
+  isDeleted   Boolean        @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group       CategoryGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  timerSessions TimerSession[]
+  timeEntries TimeEntry[]
+
+  @@index([userId, isDeleted])
+  @@index([userId, groupId])
+}
+
+model TimerSession {
+  id                    String      @id @default(cuid())
+  userId                String
+  activityId            String
+  status                TimerStatus
+  startedAt             DateTime
+  currentSegmentStartAt DateTime?
+  endedAt               DateTime?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  user                  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity              Activity    @relation(fields: [activityId], references: [id], onDelete: Restrict)
+  timeEntries           TimeEntry[]
+
+  @@index([userId, status])
+  @@index([userId, startedAt])
+}
+
+model TimeEntry {
+  id                     String          @id @default(cuid())
+  userId                 String
+  activityId             String?
+  activitySnapshotName   String
+  activitySnapshotColor  String
+  activityDeletedSnapshot Boolean        @default(false)
+  timerSessionId         String?
+  startTime              DateTime
+  endTime                DateTime
+  durationMinutes        Int
+  note                   String?
+  createdByType          EntrySourceType
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity               Activity?       @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  timerSession           TimerSession?   @relation(fields: [timerSessionId], references: [id], onDelete: SetNull)
+
+  @@index([userId, startTime, endTime])
+  @@index([userId, timerSessionId])
+}

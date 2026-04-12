@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fffdfa;
+  --foreground: #322d2b;
+  --muted: #857b76;
+  --line: rgba(91, 80, 75, 0.15);
+  --line-strong: rgba(91, 80, 75, 0.24);
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-soft: rgba(255, 248, 244, 0.78);
+  --accent: #f4a6b8;
+  --accent-soft: rgba(244, 166, 184, 0.14);
+  --shadow: 0 8px 24px rgba(91, 80, 75, 0.04);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --font-sans: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Cormorant Garamond", serif;
+  --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  background-image:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.96), rgba(255, 253, 250, 0.98));
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(244, 166, 184, 0.25);
+}
+
+.app-shell {
+  position: relative;
+}
+
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to right, transparent 0, transparent calc(100% - 1px), rgba(91, 80, 75, 0.03) calc(100% - 1px));
+  background-size: 28px 28px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent 80%);
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91, 80, 75, 0.28) transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(91, 80, 75, 0.18);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
