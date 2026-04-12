@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Timelane
 
-## Getting Started
+Timelane is a personal time tracking app built with Next.js and deployed on Vercel.
 
-First, run the development server:
+It is designed for a single-user, account-based workflow with:
+
+- email magic link login
+- custom activity groups and events
+- forward timer tracking with pause and resume
+- manual time entry
+- a multi-day timeline view
+- pie chart analytics
+- multi-device sync with exactly one active timer per account
+
+## Stack
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- Prisma
+- PostgreSQL
+- Auth.js
+- Resend
+- Recharts
+- date-fns
+
+## Features
+
+- Magic link sign-in with email as the unique identity
+- Display name and timezone per account
+- Group and event management
+- 18 candy-color presets for events
+- Soft delete for events while keeping historical snapshots
+- Server-enforced single active timer per account
+- Pause and resume create separate timeline blocks
+- Manual entry creation and editing
+- Overlap prevention for time entries
+- Cross-day entry splitting
+- 7-day timeline layout
+- Pie chart analytics for today, this week, this month, and total
+
+## Environment Variables
+
+Create `.env.local` for local development:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/timelane?schema=public"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="replace-with-a-long-random-secret"
+RESEND_API_KEY="re_replace_me"
+RESEND_FROM="Timelane <onboarding@resend.dev>"
+```
+
+For production on Vercel, add the same variables in the project settings and set `NEXTAUTH_URL` to your deployed domain.
+
+## Local Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Generate Prisma Client:
+
+```bash
+npm run db:generate
+```
+
+Push the schema to your database:
+
+```bash
+npm run db:push
+```
+
+Start the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The Prisma schema is located at:
 
-## Learn More
+- `prisma/schema.prisma`
 
-To learn more about Next.js, take a look at the following resources:
+The initial SQL migration is located at:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `prisma/migrations/0001_init/migration.sql`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+Recommended deployment flow:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push the project to GitHub
+2. Import the repository into Vercel
+3. Add all required environment variables
+4. Deploy
+5. Verify login, timer actions, timeline, and analytics
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+
+- `TimeEntry` is the source of truth for timeline rendering and analytics
+- historical records keep activity snapshot data even after an event is deleted
+- only one active timer is allowed per account across all devices
+- for production email delivery, use a verified Resend domain instead of the default test sender
