@@ -1,6 +1,6 @@
-import { EntrySourceType, Prisma } from "@prisma/client";
+import { EntrySourceType, Prisma, type TimeEntry } from "@prisma/client";
 import { differenceInMinutes } from "date-fns";
-import { splitRangeByDay, toUtcFromLocalInput } from "@/lib/date";
+import { getLocalDateKey, splitRangeByDay, toUtcFromLocalInput } from "@/lib/date";
 import { ApiError } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
 import { normalizeOptionalNote } from "@/lib/validators";
@@ -96,4 +96,40 @@ export async function createSplitEntries(input: EntryInput, tx: Prisma.Transacti
       }),
     ),
   );
+}
+
+export async function getEntriesInRange(
+  userId: string,
+  startTime: Date,
+  endTime: Date,
+  tx: Prisma.TransactionClient = prisma,
+) {
+  return tx.timeEntry.findMany({
+    where: {
+      userId,
+      startTime: { gte: startTime },
+      endTime: { lte: endTime },
+    },
+    orderBy: { startTime: "asc" },
+  });
+}
+
+export function sumEntryMinutes(entries: Pick<TimeEntry, "durationMinutes">[]) {
+  return entries.reduce((sum, entry) => sum + entry.durationMinutes, 0);
+}
+
+export function groupEntriesByLocalDay<T extends Pick<TimeEntry, "startTime">>(
+  entries: T[],
+  timezone: string,
+) {
+  const grouped = new Map<string, T[]>();
+
+  for (const entry of entries) {
+    const dayKey = getLocalDateKey(entry.startTime, timezone);
+    const current = grouped.get(dayKey) ?? [];
+    current.push(entry);
+    grouped.set(dayKey, current);
+  }
+
+  return grouped;
 }

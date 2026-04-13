@@ -1,3 +1,4 @@
+import { getEntriesInRange } from "@/lib/entries";
 import { prisma } from "@/lib/prisma";
 import { fetchCurrentTimer } from "@/lib/timer";
 import { getDateRangeBounds, getUtcDateFromLocalDateKey } from "@/lib/date";
@@ -28,14 +29,7 @@ export async function getTimelineData(userId: string, timezone: string, anchorDa
   const baseDate = anchorDate ? getUtcDateFromLocalDateKey(anchorDate, timezone) : new Date();
   const { startUtc, endUtc, days } = getDateRangeBounds(baseDate, timezone);
   const [entries, activities] = await Promise.all([
-    prisma.timeEntry.findMany({
-      where: {
-        userId,
-        startTime: { gte: startUtc },
-        endTime: { lte: endUtc },
-      },
-      orderBy: { startTime: "asc" },
-    }),
+    getEntriesInRange(userId, startUtc, endUtc),
     prisma.activity.findMany({
       where: { userId, isDeleted: false },
       orderBy: { name: "asc" },

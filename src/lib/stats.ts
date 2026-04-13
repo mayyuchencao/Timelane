@@ -1,5 +1,6 @@
 import { addDays, endOfWeek, format, parseISO, startOfWeek, subDays } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
+import { getEntriesInRange, groupEntriesByLocalDay, sumEntryMinutes } from "@/lib/entries";
 import { prisma } from "@/lib/prisma";
 import { getLocalDateKey, getPeriodRange } from "@/lib/date";
 import { percentage } from "@/lib/utils";
@@ -75,27 +76,8 @@ export async function getYearHeatmapData(userId: string, timezone: string) {
   const calendarStart = fromZonedTime(`${calendarStartKey}T00:00:00.000`, timezone);
   const calendarEnd = fromZonedTime(`${calendarEndKey}T23:59:59.999`, timezone);
 
-  const entries = await prisma.timeEntry.findMany({
-    where: {
-      userId,
-      startTime: {
-        gte: calendarStart,
-        lte: calendarEnd,
-      },
-    },
-    select: {
-      startTime: true,
-      durationMinutes: true,
-    },
-    orderBy: { startTime: "asc" },
-  });
-
-  const minutesByDay = new Map<string, number>();
-
-  for (const entry of entries) {
-    const dayKey = getLocalDateKey(entry.startTime, timezone);
-    minutesByDay.set(dayKey, (minutesByDay.get(dayKey) ?? 0) + entry.durationMinutes);
-  }
+  const entries = await getEntriesInRange(userId, calendarStart, calendarEnd);
+  const entriesByDay = groupEntriesByLocalDay(entries, timezone);
 
   const trackedDays: Array<{
     dateKey: string;
@@ -115,10 +97,14 @@ export async function getYearHeatmapData(userId: string, timezone: string) {
     cursor = addDays(cursor, 1);
   }
 
-  const maxMinutes = Math.max(...Array.from(minutesByDay.values()), 0);
+  const maxMinutes = Math.max(
+    ...Array.from(entriesByDay.values(), (dayEntries) => sumEntryMinutes(dayEntries)),
+    0,
+  );
 
   const days = trackedDays.map(({ dateKey, date }) => {
-    const minutes = minutesByDay.get(dateKey) ?? 0;
+    const dayEntries = entriesByDay.get(dateKey) ?? [];
+    const minutes = sumEntryMinutes(dayEntries);
     const isInRange = visibleKeys.has(dateKey);
 
     let level = 0;
