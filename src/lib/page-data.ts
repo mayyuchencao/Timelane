@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { fetchCurrentTimer } from "@/lib/timer";
 import { getDateRangeBounds } from "@/lib/date";
-import { getStatsForPeriod } from "@/lib/stats";
+import { getStatsForPeriod, getYearHeatmapData } from "@/lib/stats";
 
 export async function getDashboardData(userId: string, timezone: string) {
-  const [activities, groups, timer, daily, weekly, monthly, total] = await Promise.all([
+  const [activities, groups, timer, daily, weekly, monthly, total, heatmap] = await Promise.all([
     prisma.activity.findMany({
       where: { userId, isDeleted: false },
       orderBy: { name: "asc" },
@@ -18,9 +18,10 @@ export async function getDashboardData(userId: string, timezone: string) {
     getStatsForPeriod(userId, timezone, "weekly"),
     getStatsForPeriod(userId, timezone, "monthly"),
     getStatsForPeriod(userId, timezone, "total"),
+    getYearHeatmapData(userId, timezone),
   ]);
 
-  return { activities, groups, timer, stats: { daily, weekly, monthly, total } };
+  return { activities, groups, timer, stats: { daily, weekly, monthly, total }, heatmap };
 }
 
 export async function getTimelineData(userId: string, timezone: string, anchorDate?: string) {

@@ -203,7 +203,15 @@ export function StatsPanel({
                   <Cell key={`${item.name}-${item.color}`} fill={item.color} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip
+                formatter={(value: number) => formatMinutes(value)}
+                contentStyle={{
+                  borderRadius: 0,
+                  borderColor: "rgba(91, 80, 75, 0.16)",
+                  backgroundColor: "rgba(255, 253, 250, 0.96)",
+                  color: "rgba(50, 45, 43, 0.88)",
+                }}
+              />
             </PieChart>
           </ResponsiveContainer>
         ) : (
