@@ -78,7 +78,11 @@ export async function getYearHeatmapData(userId: string, timezone: string) {
   const entries = await prisma.timeEntry.findMany({
     where: {
       userId,
-      activityDeletedSnapshot: false,
+      activity: {
+        is: {
+          isDeleted: false,
+        },
+      },
       startTime: {
         gte: calendarStart,
         lte: calendarEnd,
