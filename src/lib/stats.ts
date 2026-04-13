@@ -128,8 +128,6 @@ export async function getYearHeatmapData(userId: string, timezone: string) {
       minutes,
       level,
       isInRange,
-      dayLabel: format(date, "EEE"),
-      monthLabel: format(date, "MMM"),
       tooltipLabel: format(date, "MMMM d, yyyy"),
     };
   });

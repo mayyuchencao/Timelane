@@ -10,8 +10,6 @@ type HeatmapDay = {
   minutes: number;
   level: number;
   isInRange: boolean;
-  dayLabel: string;
-  monthLabel: string;
   tooltipLabel: string;
 };
 
