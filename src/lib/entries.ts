@@ -89,7 +89,9 @@ export async function createSplitEntries(input: EntryInput, tx: Prisma.Transacti
           timerSessionId: input.timerSessionId ?? null,
           startTime: part.startTime,
           endTime: part.endTime,
-          durationMinutes: Math.max(1, part.durationMinutes || differenceInMinutes(part.endTime, part.startTime)),
+          durationMinutes: normalizeDurationMinutes(
+            part.durationMinutes || differenceInMinutes(part.endTime, part.startTime),
+          ),
           note: normalizeOptionalNote(input.note),
           createdByType: input.createdByType,
         },
@@ -116,6 +118,10 @@ export async function getEntriesInRange(
 
 export function sumEntryMinutes(entries: Pick<TimeEntry, "durationMinutes">[]) {
   return entries.reduce((sum, entry) => sum + entry.durationMinutes, 0);
+}
+
+export function normalizeDurationMinutes(durationMinutes: number) {
+  return Math.max(1, durationMinutes || 0);
 }
 
 export function groupEntriesByLocalDay<T extends Pick<TimeEntry, "startTime">>(

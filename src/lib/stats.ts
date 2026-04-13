@@ -31,7 +31,7 @@ export async function getStatsForPeriod(
     orderBy: { startTime: "asc" },
   });
 
-  const totalMinutes = entries.reduce((sum, entry) => sum + entry.durationMinutes, 0);
+  const totalMinutes = sumEntryMinutes(entries);
   const grouped = new Map<
     string,
     { activityName: string; color: string; minutes: number; deleted: boolean; groupName: string }

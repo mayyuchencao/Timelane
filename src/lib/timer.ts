@@ -1,6 +1,7 @@
 import { TimerStatus, type Prisma } from "@prisma/client";
 import { differenceInMinutes } from "date-fns";
 import { splitRangeByDay } from "@/lib/date";
+import { normalizeDurationMinutes } from "@/lib/entries";
 import { ApiError } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
 
@@ -41,7 +42,9 @@ async function createSegmentEntry(now: Date, session: Awaited<ReturnType<typeof 
           timerSessionId: session.id,
           startTime: part.startTime,
           endTime: part.endTime,
-          durationMinutes: Math.max(1, part.durationMinutes || differenceInMinutes(part.endTime, part.startTime)),
+          durationMinutes: normalizeDurationMinutes(
+            part.durationMinutes || differenceInMinutes(part.endTime, part.startTime),
+          ),
           createdByType: "timer",
         },
       }),
