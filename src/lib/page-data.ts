@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { fetchCurrentTimer } from "@/lib/timer";
-import { getDateRangeBounds } from "@/lib/date";
+import { getDateRangeBounds, getUtcDateFromLocalDateKey } from "@/lib/date";
 import { getStatsForPeriod, getYearHeatmapData } from "@/lib/stats";
 
 export async function getDashboardData(userId: string, timezone: string) {
@@ -25,7 +25,7 @@ export async function getDashboardData(userId: string, timezone: string) {
 }
 
 export async function getTimelineData(userId: string, timezone: string, anchorDate?: string) {
-  const baseDate = anchorDate ? new Date(anchorDate) : new Date();
+  const baseDate = anchorDate ? getUtcDateFromLocalDateKey(anchorDate, timezone) : new Date();
   const { startUtc, endUtc, days } = getDateRangeBounds(baseDate, timezone);
   const [entries, activities] = await Promise.all([
     prisma.timeEntry.findMany({

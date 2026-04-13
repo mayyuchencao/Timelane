@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Activity, TimeEntry, User } from "@prisma/client";
-import { addDays, format, subDays } from "date-fns";
+import { addDays, format, parseISO, subDays } from "date-fns";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toZonedTime } from "date-fns-tz";
@@ -48,7 +48,7 @@ export function TimelineBoard({
   const rangeStart = days[0] ? getLocalDateKey(days[0], user.timezone) : getLocalDateKey(new Date(), user.timezone);
 
   function moveRange(offsetDays: number) {
-    const current = new Date(rangeStart);
+    const current = parseISO(rangeStart);
     const next = offsetDays > 0 ? addDays(current, offsetDays) : subDays(current, Math.abs(offsetDays));
     router.push(`/timeline?date=${format(next, "yyyy-MM-dd")}`);
   }

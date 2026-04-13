@@ -29,6 +29,10 @@ export function getLocalDateKey(date: Date | string, timezone: string) {
   return formatInTimeZone(date, timezone, "yyyy-MM-dd");
 }
 
+export function getUtcDateFromLocalDateKey(dateKey: string, timezone: string) {
+  return fromZonedTime(`${dateKey}T12:00:00.000`, timezone);
+}
+
 export function getDateRangeBounds(anchorDate: Date, timezone: string) {
   const zoned = toZonedTime(anchorDate, timezone);
   const start = startOfDay(zoned);
