@@ -1,5 +1,5 @@
-import { eachDayOfInterval, endOfDay, endOfWeek, startOfDay, startOfWeek, subDays } from "date-fns";
-import { fromZonedTime, toZonedTime } from "date-fns-tz";
+import { addDays, endOfWeek, format, parseISO, startOfWeek, subDays } from "date-fns";
+import { fromZonedTime } from "date-fns-tz";
 import { prisma } from "@/lib/prisma";
 import { formatLocal, getPeriodRange } from "@/lib/date";
 import { percentage } from "@/lib/utils";
@@ -65,12 +65,15 @@ export async function getStatsForPeriod(
 }
 
 export async function getYearHeatmapData(userId: string, timezone: string) {
-  const today = toZonedTime(new Date(), timezone);
-  const firstTrackedDay = subDays(startOfDay(today), 364);
+  const todayKey = formatLocal(new Date(), timezone, "yyyy-MM-dd");
+  const todayDate = parseISO(todayKey);
+  const firstTrackedDay = subDays(todayDate, 364);
   const calendarStartLocal = startOfWeek(firstTrackedDay, { weekStartsOn: 0 });
-  const calendarEndLocal = endOfWeek(today, { weekStartsOn: 0 });
-  const calendarStart = fromZonedTime(calendarStartLocal, timezone);
-  const calendarEnd = fromZonedTime(endOfDay(calendarEndLocal), timezone);
+  const calendarEndLocal = endOfWeek(todayDate, { weekStartsOn: 0 });
+  const calendarStartKey = format(calendarStartLocal, "yyyy-MM-dd");
+  const calendarEndKey = format(calendarEndLocal, "yyyy-MM-dd");
+  const calendarStart = fromZonedTime(`${calendarStartKey}T00:00:00.000`, timezone);
+  const calendarEnd = fromZonedTime(`${calendarEndKey}T23:59:59.999`, timezone);
 
   const entries = await prisma.timeEntry.findMany({
     where: {
@@ -95,17 +98,27 @@ export async function getYearHeatmapData(userId: string, timezone: string) {
     minutesByDay.set(dayKey, (minutesByDay.get(dayKey) ?? 0) + entry.durationMinutes);
   }
 
-  const trackedDays = eachDayOfInterval({ start: calendarStartLocal, end: calendarEndLocal });
-  const visibleKeys = new Set(
-    eachDayOfInterval({ start: firstTrackedDay, end: startOfDay(today) }).map((date) =>
-      formatLocal(date, timezone, "yyyy-MM-dd"),
-    ),
-  );
+  const trackedDays: Array<{
+    dateKey: string;
+    date: Date;
+  }> = [];
+  const visibleKeys = new Set<string>();
+  let cursor = calendarStartLocal;
+
+  while (cursor <= calendarEndLocal) {
+    const dateKey = format(cursor, "yyyy-MM-dd");
+    trackedDays.push({ dateKey, date: cursor });
+
+    if (dateKey >= format(firstTrackedDay, "yyyy-MM-dd") && dateKey <= todayKey) {
+      visibleKeys.add(dateKey);
+    }
+
+    cursor = addDays(cursor, 1);
+  }
 
   const maxMinutes = Math.max(...Array.from(minutesByDay.values()), 0);
 
-  const days = trackedDays.map((date) => {
-    const dateKey = formatLocal(date, timezone, "yyyy-MM-dd");
+  const days = trackedDays.map(({ dateKey, date }) => {
     const minutes = minutesByDay.get(dateKey) ?? 0;
     const isInRange = visibleKeys.has(dateKey);
 
@@ -130,9 +143,9 @@ export async function getYearHeatmapData(userId: string, timezone: string) {
       minutes,
       level,
       isInRange,
-      dayLabel: formatLocal(date, timezone, "EEE"),
-      monthLabel: formatLocal(date, timezone, "MMM"),
-      tooltipLabel: formatLocal(date, timezone, "MMMM d, yyyy"),
+      dayLabel: format(date, "EEE"),
+      monthLabel: format(date, "MMM"),
+      tooltipLabel: format(date, "MMMM d, yyyy"),
     };
   });
 
