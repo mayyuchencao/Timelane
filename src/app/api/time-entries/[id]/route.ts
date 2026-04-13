@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { EntrySourceType } from "@prisma/client";
 import { createSplitEntries } from "@/lib/entries";
@@ -39,6 +40,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       ),
     );
 
+    revalidatePath("/timeline");
+    revalidatePath("/dashboard");
+
     return NextResponse.json(created);
   } catch (error) {
     return handleRouteError(error);
@@ -58,6 +62,8 @@ export async function DELETE(_: NextRequest, { params }: Params) {
     }
 
     await prisma.timeEntry.delete({ where: { id } });
+    revalidatePath("/timeline");
+    revalidatePath("/dashboard");
     return NextResponse.json({ success: true });
   } catch (error) {
     return handleRouteError(error);

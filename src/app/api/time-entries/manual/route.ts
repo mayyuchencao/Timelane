@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { EntrySourceType } from "@prisma/client";
 import { createSplitEntries } from "@/lib/entries";
@@ -25,6 +26,9 @@ export async function POST(request: NextRequest) {
         tx,
       ),
     );
+
+    revalidatePath("/timeline");
+    revalidatePath("/dashboard");
 
     return NextResponse.json(entries, { status: 201 });
   } catch (error) {
