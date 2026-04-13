@@ -25,6 +25,10 @@ export function formatLocal(date: Date | string, timezone: string, pattern: stri
   return formatInTimeZone(date, timezone, pattern);
 }
 
+export function getLocalDateKey(date: Date | string, timezone: string) {
+  return formatInTimeZone(date, timezone, "yyyy-MM-dd");
+}
+
 export function getDateRangeBounds(anchorDate: Date, timezone: string) {
   const zoned = toZonedTime(anchorDate, timezone);
   const start = startOfDay(zoned);

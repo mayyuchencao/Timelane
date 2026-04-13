@@ -1,7 +1,7 @@
 import { addDays, endOfWeek, format, parseISO, startOfWeek, subDays } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
 import { prisma } from "@/lib/prisma";
-import { formatLocal, getPeriodRange } from "@/lib/date";
+import { getLocalDateKey, getPeriodRange } from "@/lib/date";
 import { percentage } from "@/lib/utils";
 
 export async function getStatsForPeriod(
@@ -65,7 +65,7 @@ export async function getStatsForPeriod(
 }
 
 export async function getYearHeatmapData(userId: string, timezone: string) {
-  const todayKey = formatLocal(new Date(), timezone, "yyyy-MM-dd");
+  const todayKey = getLocalDateKey(new Date(), timezone);
   const todayDate = parseISO(todayKey);
   const firstTrackedDay = subDays(todayDate, 364);
   const calendarStartLocal = startOfWeek(firstTrackedDay, { weekStartsOn: 0 });
@@ -93,7 +93,7 @@ export async function getYearHeatmapData(userId: string, timezone: string) {
   const minutesByDay = new Map<string, number>();
 
   for (const entry of entries) {
-    const dayKey = formatLocal(entry.startTime, timezone, "yyyy-MM-dd");
+    const dayKey = getLocalDateKey(entry.startTime, timezone);
     minutesByDay.set(dayKey, (minutesByDay.get(dayKey) ?? 0) + entry.durationMinutes);
   }
 

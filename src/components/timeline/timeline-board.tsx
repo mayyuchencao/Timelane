@@ -5,10 +5,11 @@ import type { Activity, TimeEntry, User } from "@prisma/client";
 import { addDays, format, subDays } from "date-fns";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { formatInTimeZone, toZonedTime } from "date-fns-tz";
+import { toZonedTime } from "date-fns-tz";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatLocal, getLocalDateKey } from "@/lib/date";
 import { formatMinutes } from "@/lib/utils";
 import { EntryEditorDialog } from "@/components/timeline/entry-editor-dialog";
 
@@ -35,18 +36,16 @@ export function TimelineBoard({
 
   const groupedEntries = useMemo(() => {
     return days.map((day) => {
-      const dayKey = format(day, "yyyy-MM-dd");
+      const dayKey = getLocalDateKey(day, user.timezone);
       return {
         day,
         dayKey,
-        items: entries.filter(
-          (entry) => formatInTimeZone(entry.startTime, user.timezone, "yyyy-MM-dd") === dayKey,
-        ),
+        items: entries.filter((entry) => getLocalDateKey(entry.startTime, user.timezone) === dayKey),
       };
     });
   }, [days, entries, user.timezone]);
 
-  const rangeStart = days[0] ? format(days[0], "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd");
+  const rangeStart = days[0] ? getLocalDateKey(days[0], user.timezone) : getLocalDateKey(new Date(), user.timezone);
 
   function moveRange(offsetDays: number) {
     const current = new Date(rangeStart);
@@ -94,8 +93,10 @@ export function TimelineBoard({
           <div />
           {days.map((day) => (
             <div key={day.toISOString()} className="px-3">
-              <p className="text-xs uppercase tracking-[0.22em] text-[var(--muted)]">{format(day, "EEE")}</p>
-              <p className="mt-2 text-lg font-medium">{format(day, "MMM d")}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-[var(--muted)]">
+                {formatLocal(day, user.timezone, "EEE")}
+              </p>
+              <p className="mt-2 text-lg font-medium">{formatLocal(day, user.timezone, "MMM d")}</p>
             </div>
           ))}
         </div>
