@@ -60,8 +60,8 @@ export function HeatmapPanel({
     heatmap.days.slice(index * 7, index * 7 + 7),
   );
   const gridStyle = {
-    ["--heatmap-cell" as string]: "clamp(0.38rem, 0.62vw, 0.56rem)",
-    ["--heatmap-gap" as string]: "clamp(0.14rem, 0.22vw, 0.22rem)",
+    ["--heatmap-cell" as string]: "clamp(0.54rem, 0.88vw, 0.82rem)",
+    ["--heatmap-gap" as string]: "clamp(0.16rem, 0.28vw, 0.28rem)",
   } as CSSProperties;
 
   return (
@@ -124,12 +124,11 @@ export function HeatmapPanel({
                       <div
                         key={day.date}
                         title={`${day.minutes > 0 ? formatMinutes(day.minutes) : "No tracked time"} on ${day.tooltipLabel}`}
-                        className="border"
+                        className="block"
                         style={{
                           width: "var(--heatmap-cell)",
                           height: "var(--heatmap-cell)",
                           backgroundColor: day.isInRange ? HEATMAP_COLORS[day.level] : "transparent",
-                          borderColor: "rgba(220, 127, 165, 0.18)",
                           opacity: day.isInRange ? 1 : 0.22,
                         }}
                       />
@@ -140,18 +139,16 @@ export function HeatmapPanel({
             </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-4 border-t border-[var(--line)] pt-4 text-xs text-[var(--muted)]">
-          <p>Every square marks a day from the past year, excluding deleted events.</p>
+        <div className="mt-4 flex items-center justify-end gap-2 border-t border-[var(--line)] pt-4 text-xs text-[var(--muted)]">
           <div className="flex items-center gap-2">
             <span>Less</span>
             {HEATMAP_COLORS.map((color, index) => (
               <span
                 key={`legend-${index}`}
-                className="border"
+                className="block"
                 style={{
                   width: "var(--heatmap-cell)",
                   height: "var(--heatmap-cell)",
-                  borderColor: "rgba(220, 127, 165, 0.18)",
                   backgroundColor: color,
                 }}
               />
