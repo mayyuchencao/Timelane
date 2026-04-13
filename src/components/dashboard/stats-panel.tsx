@@ -204,7 +204,6 @@ export function StatsPanel({
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value: number) => formatMinutes(value)}
                 contentStyle={{
                   borderRadius: 0,
                   borderColor: "rgba(91, 80, 75, 0.16)",
