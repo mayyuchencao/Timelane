@@ -9,7 +9,7 @@ import { formatMinutes } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Panel } from "@/components/ui/panel";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 type CurrentTimer = {
   id: string;
@@ -102,18 +102,17 @@ export function TimerPanel({
       <div className="mt-8 space-y-4">
         <div className={timer ? "space-y-2 opacity-55" : "space-y-2"}>
           <Label htmlFor="activity">Event</Label>
-          <Select value={selectedActivityId} onValueChange={setSelectedActivityId} disabled={!!timer}>
-            <SelectTrigger id="activity" className="rounded-none border-x-0 border-t-0 px-0">
-              <SelectValue placeholder="Choose an event" />
-            </SelectTrigger>
-            <SelectContent>
-              {activities.map((activity) => (
-                <SelectItem key={activity.id} value={activity.id}>
-                  {activity.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SearchableSelect
+            value={selectedActivityId}
+            onValueChange={setSelectedActivityId}
+            disabled={!!timer}
+            placeholder="Choose an event"
+            searchPlaceholder="Search events..."
+            options={activities.map((activity) => ({
+              value: activity.id,
+              label: activity.name,
+            }))}
+          />
         </div>
         <div className="flex flex-wrap gap-3">
           {!timer ? (

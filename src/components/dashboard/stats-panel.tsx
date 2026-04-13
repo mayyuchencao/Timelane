@@ -7,7 +7,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { formatMinutes } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 type EventItem = {
   activityName: string;
@@ -145,18 +145,16 @@ export function StatsPanel({
               ))}
             </div>
             <div className="min-w-[190px]">
-              <Select value={activeGroup} onValueChange={setActiveGroup}>
-                <SelectTrigger className="rounded-none border-x-0 border-t-0 bg-transparent px-0">
-                  <SelectValue placeholder="Choose a group" />
-                </SelectTrigger>
-                <SelectContent>
-                  {groupOptions.map((groupName) => (
-                    <SelectItem key={groupName} value={groupName}>
-                      {groupName === "all" ? "All Groups" : groupName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={activeGroup}
+                onValueChange={setActiveGroup}
+                placeholder="Choose a group"
+                searchPlaceholder="Search groups..."
+                options={groupOptions.map((groupName) => ({
+                  value: groupName,
+                  label: groupName === "all" ? "All Groups" : groupName,
+                }))}
+              />
             </div>
           </div>
         </div>

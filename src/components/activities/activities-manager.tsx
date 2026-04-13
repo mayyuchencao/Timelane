@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Panel } from "@/components/ui/panel";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 function ColorDots({
   value,
@@ -245,19 +245,19 @@ export function ActivitiesManager({
               </div>
               <div className="space-y-2">
                 <Label>Group</Label>
-                <Select value={groupId} onValueChange={setGroupId}>
-                  <SelectTrigger className="rounded-none border-x-0 border-t-0 px-0">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No group</SelectItem>
-                    {groups.map((group) => (
-                      <SelectItem key={group.id} value={group.id}>
-                        {group.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect
+                  value={groupId}
+                  onValueChange={setGroupId}
+                  placeholder="Choose a group"
+                  searchPlaceholder="Search groups..."
+                  options={[
+                    { value: "none", label: "No group" },
+                    ...groups.map((group) => ({
+                      value: group.id,
+                      label: group.name,
+                    })),
+                  ]}
+                />
               </div>
             </div>
             <div className="space-y-3">
@@ -276,19 +276,19 @@ export function ActivitiesManager({
                   <div className="w-full space-y-3">
                     <Input value={editName} onChange={(event) => setEditName(event.target.value)} />
                     <div className="grid gap-3 md:grid-cols-[1fr_auto]">
-                      <Select value={editGroupId} onValueChange={setEditGroupId}>
-                        <SelectTrigger className="rounded-none border-x-0 border-t-0 px-0">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">No group</SelectItem>
-                          {groups.map((group) => (
-                            <SelectItem key={group.id} value={group.id}>
-                              {group.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <SearchableSelect
+                        value={editGroupId}
+                        onValueChange={setEditGroupId}
+                        placeholder="Choose a group"
+                        searchPlaceholder="Search groups..."
+                        options={[
+                          { value: "none", label: "No group" },
+                          ...groups.map((group) => ({
+                            value: group.id,
+                            label: group.name,
+                          })),
+                        ]}
+                      />
                       <ColorDots value={editColor} onChange={setEditColor} />
                     </div>
                     <div className="flex gap-3">

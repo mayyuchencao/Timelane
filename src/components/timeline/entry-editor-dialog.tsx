@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Textarea } from "@/components/ui/textarea";
 
 function toInputValue(date: string | Date) {
@@ -102,18 +102,16 @@ export function EntryEditorDialog({
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>Event</Label>
-            <Select value={activityId} onValueChange={setActivityId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose an event" />
-              </SelectTrigger>
-              <SelectContent>
-                {activities.map((activity) => (
-                  <SelectItem key={activity.id} value={activity.id}>
-                    {activity.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              value={activityId}
+              onValueChange={setActivityId}
+              placeholder="Choose an event"
+              searchPlaceholder="Search events..."
+              options={activities.map((activity) => ({
+                value: activity.id,
+                label: activity.name,
+              }))}
+            />
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
