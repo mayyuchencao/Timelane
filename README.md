@@ -12,6 +12,16 @@ It is designed for a single-user, account-based workflow with:
 - pie chart analytics
 - multi-device sync with exactly one active timer per account
 
+## Demo
+
+Place your demo screenshot here:
+
+![Timelane demo](./demo/timelane-demo.png)
+
+Optional demo video link:
+
+- Replace this with your video link: `https://your-demo-video-link`
+
 ## Stack
 
 - Next.js App Router
@@ -100,6 +110,23 @@ Recommended deployment flow:
 3. Add all required environment variables
 4. Deploy
 5. Verify login, timer actions, timeline, and analytics
+
+## Demo Login Limitation
+
+At the moment, magic link login is intentionally limited during demo/testing.
+
+Why non-owner email addresses may not be able to log in:
+
+- the app currently uses Resend in a test/demo configuration
+- the sender is still configured as `Timelane <onboarding@resend.dev>`
+- without a verified custom sending domain, Resend does not reliably deliver magic links to arbitrary email addresses
+- as a result, login may only work for the owner email or the email associated with the Resend test setup
+
+To support public sign-in later, the project needs:
+
+1. a verified custom email domain in Resend
+2. `RESEND_FROM` updated to that verified sender
+3. redeployment with the new production email configuration
 
 ## Notes
 
