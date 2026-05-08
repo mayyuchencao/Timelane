@@ -14,13 +14,11 @@ It is designed for a single-user, account-based workflow with:
 
 ## Demo
 
-Place your demo screenshot here:
-
 ![Timelane demo](./demo/timelane-demo.png)
 
-Optional demo video link:
+video link:
 
-- Replace this with your video link: `https://your-demo-video-link`
+- https://drive.google.com/file/d/1FImHMTleS4Cskbyg6ARY7h9MNEhakYDc/view?usp=sharing`
 
 ## Stack
 
