@@ -16,9 +16,8 @@ It is designed for a single-user, account-based workflow with:
 
 ![Timelane demo](./demo/timelane-demo.png)
 
-video link:
-
-- https://drive.google.com/file/d/1FImHMTleS4Cskbyg6ARY7h9MNEhakYDc/view?usp=sharing`
+- Live app: `https://timelane.maycao.com`
+- Demo video: https://drive.google.com/file/d/1FImHMTleS4Cskbyg6ARY7h9MNEhakYDc/view?usp=sharing
 
 ## Stack
 
