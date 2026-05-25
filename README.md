@@ -1,5 +1,16 @@
 # Timelane
 
+[![GitHub](https://img.shields.io/badge/GitHub-Timelane-181717?logo=github)](https://github.com/mayyuchencao/Timelane)
+[![Live App](https://img.shields.io/badge/Live-timelane.maycao.com-3b82f6)](https://timelane.maycao.com)
+![Status](https://img.shields.io/badge/Status-Active-84cc16)
+
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2d3748?logo=prisma)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791?logo=postgresql&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?logo=vercel)
+![Resend](https://img.shields.io/badge/Resend-Email-0f172a)
+
 Timelane is a personal time tracking web app for recording what you did, how long you spent, and how your days add up over time.
 
 It is designed as a single-user productivity tool with account-based sync, forward timer tracking, manual entry editing, a multi-day timeline, and lightweight analytics.
@@ -105,8 +116,3 @@ Recommended deployment flow:
 4. Connect your custom domain
 5. Configure Resend with a verified sending domain
 6. Deploy and verify login, timer actions, timeline, and analytics
-
-## Notes
-
-- For production email delivery, use a verified Resend domain instead of the default test sender
-- If you change time entries from the timeline, dashboard analytics and heatmap should update with the same underlying entry data
