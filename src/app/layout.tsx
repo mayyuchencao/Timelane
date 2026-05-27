@@ -4,7 +4,7 @@ import { AppProviders } from "@/components/providers/app-providers";
 
 export const metadata: Metadata = {
   title: "Timelane",
-  description: "A calm, elegant personal time tracker.",
+  description: "Your personal time tracker.",
 };
 
 export default function RootLayout({
